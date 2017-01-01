@@ -3,7 +3,11 @@ player = { x = 400, y = 250, velx = 0, vely = 0, grounded = false }
 --player = { x = 200, y = 710, vel.x = 0, vel.y = 0, grounded = false }
 
 gravity = 0.015
+gFric = 0.02
 
+function sign(x)
+  return (x<0 and -1) or 1
+end
 
 function love.load()
     -- add a rectangle to the scene
@@ -30,15 +34,21 @@ function love.update(dt)
             --gravity = -0.1
             player.grounded = true
             player.vely = 0.0
-            if love.keyboard.isDown('w') then
-                if player.grounded then
+            if player.grounded then
+                if love.keyboard.isDown('w') then
                     --gravity = 0
                     player.vely = -2.0
                     player.grounded = false
                 end
+                if math.abs(player.velx) < gFric then
+                    player.velx = 0
+                else
+                    player.velx = player.velx - sign(player.velx)*gFric
+                end
             end
         end
     end
+
     player.x = player.x + player.velx
     player.y = player.y + player.vely
     -- move circle to mouse position
